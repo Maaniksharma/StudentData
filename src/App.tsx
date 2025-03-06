@@ -5,28 +5,26 @@ import StudentList from "./components/StudentList";
 interface StudentData {
   id: number;
   name: string;
-  marks: number;
   className: string;
+  marks: number;
 }
 
-const App: React.FC = () => {
-  const [studentList, setStudentList] = useState<StudentData[]>([]);
+const App = () => {
+  const [studentList, setStudentlist] = useState<StudentData[]>([]);
 
-  function addStudent(studentDetail: StudentData) {
-    console.log("studentDetail" + studentDetail);
-    setStudentList([...studentList, studentDetail]);
+  function onAddStudent(studentData: StudentData) {
+    setStudentlist([...studentList, studentData]);
+    console.log(studentList);
   }
+
   return (
-    <div
-      className=""
-      style={{
-        display: "flex",
-        gap: "20px",
-        justifyContent: "space-between",
-      }}
-    >
-      <StudentForm onAddStudent={addStudent} />
-      <StudentList studentList={studentList} />
+    <div className="flex justify-between mt-[40px]">
+      <div className="">
+        <StudentForm onAddStudent={onAddStudent} />
+      </div>
+      <div className="">
+        <StudentList studentList={studentList} />
+      </div>
     </div>
   );
 };

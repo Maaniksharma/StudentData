@@ -1,34 +1,19 @@
 import React from "react";
 
-interface StudentCardProps {
+interface StudentData {
   id: number;
   name: string;
-  marks: number;
   className: string;
+  marks: number;
 }
 
-const StudentCard: React.FC<StudentCardProps> = ({
-  id,
-  name,
-  className,
-  marks,
-}) => {
+const StudentCard: React.FC<StudentData> = ({ name, className, id, marks }) => {
   return (
-    <div
-      style={{
-        border: "2px",
-        borderStyle: "solid",
-        borderColor: "black",
-        borderRadius: "10px",
-        padding: "10px",
-        display: "flex",
-        flexDirection: "column",
-      }}
-    >
-      <div className="">{id}</div>
-      <div className="">{name}</div>
-      <div className="">{className}</div>
-      <div className="">{marks}</div>
+    <div className="flex flex-col p-2 border rounded-lg">
+      <div className="">id:{id}</div>
+      <div className="">name:{name}</div>
+      <div className="">className:{className}</div>
+      <div className="">marks:{marks}</div>
     </div>
   );
 };

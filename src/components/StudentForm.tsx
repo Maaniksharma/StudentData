@@ -1,51 +1,65 @@
-import React, { useState } from "react";
+import { useState } from "react";
 
-interface StudentData {
-  id: number;
-  name: string;
-  marks: number;
-  className: string;
-}
-interface StudentFormProps {
-  onAddStudent: (studentDetail: StudentData) => void;
-}
+const StudentForm = ({ onAddStudent }) => {
+  const [studentData, setStudentData] = useState({
+    id: 0,
+    name: "",
+    className: "",
+    marks: 0,
+  });
 
-const StudentForm: React.FC<StudentFormProps> = ({ onAddStudent }) => {
-  const [studentData, setStudentData] = useState<StudentData | {}>({});
-
-  function handleInputChange(key: string, value: number | string) {
+  function inputChangeHandler(key: string, value: number | string) {
     setStudentData({ ...studentData, [key]: value });
+  }
+  function submitHandler() {
     console.log(studentData);
+    setStudentData({
+      id: 0,
+      name: "",
+      className: "",
+      marks: 0,
+    });
+    onAddStudent(studentData);
   }
   return (
     <div>
-      <br />
+      <h3 className="text-3xl font-semibold">Student Form</h3>
       <br />
       Enter Id:
       <input
+        value={studentData.id}
         type="number"
-        onChange={(e) => handleInputChange("id", e.target.value)}
+        className="border rounded-sm"
+        onChange={(e) => inputChangeHandler("id", e.target.value)}
       />
       <br />
       Enter Name:
       <input
+        value={studentData.name}
         type="text"
-        onChange={(e) => handleInputChange("name", e.target.value)}
+        className="border rounded-sm"
+        onChange={(e) => inputChangeHandler("name", e.target.value)}
       />
       <br />
-      Enter class:
+      Enter ClassName:
       <input
+        value={studentData.className}
         type="text"
-        onChange={(e) => handleInputChange("class", e.target.value)}
+        className="border rounded-sm"
+        onChange={(e) => inputChangeHandler("className", e.target.value)}
       />
       <br />
-      Enter marks:
+      Enter Marks:
       <input
+        value={studentData.marks}
         type="number"
-        onChange={(e) => handleInputChange("marks", e.target.value)}
+        className="border rounded-sm"
+        onChange={(e) => inputChangeHandler("marks", e.target.value)}
       />
       <br />
-      <button onClick={(e) => onAddStudent(studentData)}>Add</button>
+      <button className="p-2 border rounded-lg" onClick={submitHandler}>
+        Submit
+      </button>
     </div>
   );
 };
