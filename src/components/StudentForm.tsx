@@ -1,26 +1,4 @@
-import { useState } from "react";
-
-const StudentForm = ({ onAddStudent }) => {
-  const [studentData, setStudentData] = useState({
-    id: 0,
-    name: "",
-    className: "",
-    marks: 0,
-  });
-
-  function inputChangeHandler(key: string, value: number | string) {
-    setStudentData({ ...studentData, [key]: value });
-  }
-  function submitHandler() {
-    console.log(studentData);
-    setStudentData({
-      id: 0,
-      name: "",
-      className: "",
-      marks: 0,
-    });
-    onAddStudent(studentData);
-  }
+const StudentForm = ({ studentData, inputChangeHandler, submitHandler }) => {
   return (
     <div>
       <h3 className="text-3xl font-semibold">Student Form</h3>
