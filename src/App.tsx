@@ -36,6 +36,7 @@ const App = () => {
       );
       studentListCopy[studentIndex] = studentData;
       setStudentlist(studentListCopy);
+      setIsEditing(false);
     } else onAddStudent(studentData);
   }
 
