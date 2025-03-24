@@ -1,6 +1,8 @@
 import { useState } from "react";
 import StudentForm from "./components/StudentForm";
 import StudentList from "./components/StudentList";
+import { useDispatch, useSelector } from "react-redux";
+import { AvailableActions } from "./store";
 
 interface StudentData {
   id: number;
@@ -10,7 +12,8 @@ interface StudentData {
 }
 
 const App = () => {
-  const [studentList, setStudentlist] = useState<StudentData[]>([]);
+  const studentList = useSelector((state) => state.studentList);
+  const dispatch = useDispatch();
   const [studentData, setStudentData] = useState({
     id: 0,
     name: "",
@@ -18,9 +21,7 @@ const App = () => {
     marks: 0,
   });
   const [isEditing, setIsEditing] = useState(false);
-  function inputChangeHandler(key: string, value: number | string) {
-    setStudentData({ ...studentData, [key]: value });
-  }
+
   function submitHandler() {
     console.log(studentData);
     setStudentData({
@@ -30,26 +31,26 @@ const App = () => {
       marks: 0,
     });
     if (isEditing) {
-      const studentListCopy = [...studentList];
-      const studentIndex = studentList.findIndex(
-        (student) => student.id === studentData.id
-      );
-      studentListCopy[studentIndex] = studentData;
-      setStudentlist(studentListCopy);
+      dispatch({
+        type: AvailableActions.EditStudent,
+        payload: studentData,
+      });
       setIsEditing(false);
     } else onAddStudent(studentData);
   }
 
   function onAddStudent(studentData: StudentData) {
-    setStudentlist([...studentList, studentData]);
-    console.log(studentList);
+    dispatch({
+      type: AvailableActions.AddStudent,
+      payload: studentData,
+    });
   }
 
   function deleteStudent(id: number) {
-    const newStudentList = studentList.filter(
-      (studentData) => studentData.id != id
-    );
-    setStudentlist(newStudentList);
+    dispatch({
+      type: AvailableActions.DeleteStudent,
+      payload: id,
+    });
   }
 
   function editStudent(id: number) {
