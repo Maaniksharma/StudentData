@@ -6,6 +6,7 @@ interface StudentData {
   className: string;
   marks: number;
   onDeleteStudent: (id: number) => void;
+  onEditStudent: (id: number) => void;
 }
 
 const StudentCard: React.FC<StudentData> = ({

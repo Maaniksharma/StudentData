@@ -14,6 +14,7 @@ interface StudentData {
 const StudentList: React.FC<{
   studentList: StudentData[];
   onDeleteStudent: (id: number) => void;
+  onEditStudent: (id: number) => void;
 }> = ({ studentList, onDeleteStudent, onEditStudent }) => {
   return (
     <div>
