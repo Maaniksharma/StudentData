@@ -1,60 +1,30 @@
-import { createStore } from 'redux';
-//creating a store
-//creating reducer template
-// exporting store
-
-interface StudentData {
-    id: number;
-    name: string;
-    className: string;
-    marks: number;
-}
+import { createStore } from "redux";
 
 
-export const enum AvailableActions {
-    AddStudent = "ADD_STUDENT",
-    EditStudent = "EDIT_STUDENT",
-    DeleteStudent = "DELETE_STUDENT"
-}
 
 interface Action {
-    type: AvailableActions,
-    payload: any
+    type: string
 }
 
-
-
-const initialState: { studentList: StudentData[] } = {
-    studentList: []
+interface State {
+    count: number
 }
 
+const initialState = {
+    count: 0
+}
 
-
-function studentsDataReducer(state, action: Action) {
-    let studentListCopy = []
-    let tempStudentIndex: number;
+function counterReducer(state: State = initialState, action: Action) {
     switch (action.type) {
-        case AvailableActions.AddStudent:
-            return {
-                studentList: [...state.studentList, action.payload]
-            }
-        case AvailableActions.DeleteStudent:
-            return { studentlist: state.studentList.filter((studentData) => studentData.id != action.payload.id) }
+        case "INCREMENT":
+            return { count: state.count + 1 }
 
-        case AvailableActions.EditStudent:
-            studentListCopy = [...state.studentList];
-            tempStudentIndex = studentListCopy.findIndex(
-                (student) => student.id === action.payload.studentData.id
-            );
-            studentListCopy[tempStudentIndex] = action.payload.studentData;
-            return studentListCopy;
+        case "DECREMENT":
+            return { count: state.count - 1 }
 
+        default:
+            return state
     }
-
 }
 
-const store = createStore(studentsDataReducer);
-
-
-
-export default store;
+export const store = createStore(counterReducer)

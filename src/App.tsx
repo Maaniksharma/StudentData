@@ -1,78 +1,66 @@
-import { useState } from "react";
-import StudentForm from "./components/StudentForm";
-import StudentList from "./components/StudentList";
-import { useDispatch, useSelector } from "react-redux";
-import { AvailableActions } from "./store";
+import { useEffect, useState } from "react";
+import type { Socket } from "socket.io-client";
+import { v4 } from "uuid";
+import { io } from "socket.io-client";
 
-interface StudentData {
-  id: number;
-  name: string;
-  className: string;
-  marks: number;
-}
+const App: React.FC = () => {
+  const [userId] = useState(v4());
+  const [userIdToChat, setUserIdToChat] = useState("");
+  const [isUserIdLock, setUserIdLock] = useState(false);
+  const [messages, setMessages] = useState<string[]>([]);
+  const [currMessage, setCurrmessage] = useState("");
+  const [socket, setSocket] = useState<Socket | null>(null);
 
-const App = () => {
-  const studentList = useSelector((state) => state.studentList);
-  const dispatch = useDispatch();
-  const [studentData, setStudentData] = useState({
-    id: 0,
-    name: "",
-    className: "",
-    marks: 0,
-  });
-  const [isEditing, setIsEditing] = useState(false);
-
-  function submitHandler() {
-    console.log(studentData);
-    setStudentData({
-      id: 0,
-      name: "",
-      className: "",
-      marks: 0,
-    });
-    if (isEditing) {
-      dispatch({
-        type: AvailableActions.EditStudent,
-        payload: studentData,
+  function sendMessage() {
+    if (socket) {
+      socket.emit("message", {
+        userId,
+        userIdToChat,
+        currMessage,
       });
-      setIsEditing(false);
-    } else onAddStudent(studentData);
+      setMessages([...messages, currMessage]);
+    }
   }
 
-  function onAddStudent(studentData: StudentData) {
-    dispatch({
-      type: AvailableActions.AddStudent,
-      payload: studentData,
+  useEffect(() => {
+    console.log(messages);
+  }, [messages]);
+
+  useEffect(() => {
+    const socket = io("http://localhost:3001");
+    setSocket(socket);
+    socket.emit("register", userId, () => {
+      console.log("user registered successfully");
     });
-  }
-
-  function deleteStudent(id: number) {
-    dispatch({
-      type: AvailableActions.DeleteStudent,
-      payload: id,
+    socket.emit("message", "Hello server");
+    socket.on("message", (message) => {
+      setMessages((messages) => [...messages, message]);
     });
-  }
-
-  function editStudent(id: number) {
-    setIsEditing(true);
-    const studentToEdit = studentList.filter(
-      (studentData) => studentData.id === id
-    );
-    setStudentData(studentToEdit[0]);
-  }
+  }, []);
 
   return (
-    <div className="flex justify-between mt-[40px]">
-      <StudentForm
-        studentData={studentData}
-        inputChangeHandler={inputChangeHandler}
-        submitHandler={submitHandler}
+    <div>
+      Your user Id:{userId}
+      <input
+        type="text"
+        onChange={(e) => {
+          setUserIdToChat(e.target.value);
+        }}
+        disabled={isUserIdLock}
+        value={userIdToChat}
       />
-      <StudentList
-        studentList={studentList}
-        onDeleteStudent={deleteStudent}
-        onEditStudent={editStudent}
+      <button onClick={() => setUserIdLock(!isUserIdLock)}>
+        Toogle user id lock
+      </button>
+      {messages.map((message) => (
+        <div className="">{message}</div>
+      ))}
+      <input
+        type="text"
+        onChange={(e) => setCurrmessage(e.target.value)}
+        value={currMessage}
       />
+      <button onClick={sendMessage}>Send Message</button>
     </div>
   );
 };
