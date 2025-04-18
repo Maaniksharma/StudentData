@@ -4,63 +4,55 @@ import { v4 } from "uuid";
 import { io } from "socket.io-client";
 
 const App: React.FC = () => {
+  const [socket, setSocket] = useState<Socket | null>(null);
   const [userId] = useState(v4());
   const [userIdToChat, setUserIdToChat] = useState("");
-  const [isUserIdLock, setUserIdLock] = useState(false);
+  const [isUserIdLock, setIsUserIdLock] = useState(false);
   const [messages, setMessages] = useState<string[]>([]);
-  const [currMessage, setCurrmessage] = useState("");
-  const [socket, setSocket] = useState<Socket | null>(null);
+  const [currMessage, setCurrMessage] = useState("");
 
   function sendMessage() {
     if (socket) {
       socket.emit("message", {
-        userId,
         userIdToChat,
         currMessage,
       });
-      setMessages([...messages, currMessage]);
+      setMessages((messages) => [...messages, currMessage]);
     }
   }
 
   useEffect(() => {
-    console.log(messages);
-  }, [messages]);
-
-  useEffect(() => {
     const socket = io("http://localhost:3001");
     setSocket(socket);
-    socket.emit("register", userId, () => {
-      console.log("user registered successfully");
-    });
     socket.emit("message", "Hello server");
+    socket.emit("register", userId);
     socket.on("message", (message) => {
       setMessages((messages) => [...messages, message]);
     });
   }, []);
 
   return (
-    <div>
-      Your user Id:{userId}
+    <div className="">
+      your userId :{userId}
+      <br />
       <input
         type="text"
-        onChange={(e) => {
-          setUserIdToChat(e.target.value);
-        }}
-        disabled={isUserIdLock}
+        onChange={(e) => setUserIdToChat(e.target.value)}
         value={userIdToChat}
+        disabled={isUserIdLock}
       />
-      <button onClick={() => setUserIdLock(!isUserIdLock)}>
-        Toogle user id lock
+      <button onClick={() => setIsUserIdLock(!isUserIdLock)}>
+        Lock userId
       </button>
       {messages.map((message) => (
         <div className="">{message}</div>
       ))}
       <input
         type="text"
-        onChange={(e) => setCurrmessage(e.target.value)}
+        onChange={(e) => setCurrMessage(e.target.value)}
         value={currMessage}
       />
-      <button onClick={sendMessage}>Send Message</button>
+      <button onClick={sendMessage}>Send</button>
     </div>
   );
 };
